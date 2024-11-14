@@ -1,7 +1,12 @@
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "mergeSort.h"
+
+
+const float EPSILON = 0.00001;
+
 
 int compareInt(const void *ptr_a, const void *ptr_b)
 {
@@ -39,26 +44,24 @@ int compareStruct(const void *ptr_a, const void *ptr_b)
 }
 
 
-void testIntSort()
+int testIntSort()
 {
 	int arr[] = {5, 3, 8, 6, 2, 7, 4, 1};
 	int expected[] = {1, 2, 3, 4, 5, 6, 7, 8};
 	int length = sizeof(arr) / sizeof(arr[0]);
 
 	mergeSort(arr, length, sizeof(int), compareInt);
-
 	for (int i = 0; i < length; i++)
 	{
 		if (arr[i] != expected[i])
 		{
-			printf("testIntSort failed\n");
-			return;
+			return -1;
 		}
 	}
-	printf("testIntSort passed\n");
+	return 1;
 }
 
-void testFloatSort()
+int testFloatSort()
 {
 	float arr[] = {5.5, 3.3, 8.8, 6.6, 2.2, 7.7, 4.4, 1.1};
 	float expected[] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
@@ -68,16 +71,15 @@ void testFloatSort()
 
 	for (int i = 0; i < length; i++)
 	{
-		if (arr[i] != expected[i])
+		if (fabsf(arr[i] - expected[i]) > EPSILON)
 		{
-			printf("testFloatSort failed\n");
-			return;
+			return -1;
 		}
 	}
-	printf("testFloatSort passed\n");
+	return 1;
 }
 
-void testCharSort()
+int testCharSort()
 {
 	char arr[] = {'e', 'd', 'a', 'c', 'b'};
 	char expected[] = {'a', 'b', 'c', 'd', 'e'};
@@ -89,14 +91,13 @@ void testCharSort()
 	{
 		if (arr[i] != expected[i])
 		{
-			printf("testCharSort failed\n");
-			return;
+			return -1;
 		}
 	}
-	printf("testCharSort passed\n");
+	return 1;
 }
 
-void testDoubleSort()
+int testDoubleSort()
 {
 	double arr[] = {5.5, 3.3, 8.8, 6.6, 2.2, 7.7, 4.4, 1.1};
 	double expected[] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8};
@@ -108,14 +109,13 @@ void testDoubleSort()
 	{
 		if (arr[i] != expected[i])
 		{
-			printf("testDoubleSort failed\n");
-			return;
+			return -1;
 		}
 	}
-	printf("testDoubleSort passed\n");
+	return 1;
 }
 
-void testStructSort()
+int testStructSort()
 {
 	INFO arr[] = {
 		{"Smith", "John", 'M'},
@@ -137,20 +137,28 @@ void testStructSort()
 			strcmp(arr[i].last_name, expected[i].last_name) != 0 ||
 			arr[i].sex != expected[i].sex)
 		{
-			printf("testStructSort failed\n");
-			return;
+			return -1;
 		}
 	}
-	printf("testStructSort passed\n");
+	return 1;
 }
 
-int main()
+void PrintTestRes(char* testName, int testRes)
 {
-	testIntSort();
-	testFloatSort();
-	testCharSort();
-	testDoubleSort();
-	testStructSort();
 
-	return 0;
+	if (testRes != -1) {
+		printf("%s passed\n", testName);
+		return;
+	}
+	printf("%s failed\n", testName);
+	return;
+}
+
+void RunAllTests()
+{
+	PrintTestRes("testIntSort", testIntSort());
+	PrintTestRes("testFloatSort", testFloatSort());
+	PrintTestRes("testChatSort", testCharSort());
+	PrintTestRes("testDoubleSort", testDoubleSort());
+	PrintTestRes("testStructSort", testStructSort());
 }
